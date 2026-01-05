@@ -5,22 +5,38 @@
  * - Floating moons representing beloved pets
  * - Graceful interactions with modal reveals
  * - Meditative, poetic atmosphere
+ * - Real-time reply notifications via WebSocket
  */
 
+import { useState, useEffect } from "react";
 import Moon from "@/components/Moon";
 import NightSky from "@/components/NightSky";
 import PetModal from "@/components/PetModal";
+import ReplyNotification from "@/components/ReplyNotification";
+import ReplyModal from "@/components/ReplyModal";
+import { useReplyNotification } from "@/hooks/useReplyNotification";
 import { samplePets } from "@/data/pets";
 import { Pet } from "@/types/pet";
-import { useState } from "react";
 
 export default function Home() {
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [replyModalOpen, setReplyModalOpen] = useState(false);
+  const { notification, dismissNotification, registerUser } =
+    useReplyNotification();
+
+  // 사용자 등록 (실제로는 인증 시스템에서 가져와야 함)
+  useEffect(() => {
+    registerUser(1); // 테스트용 사용자 ID
+  }, [registerUser]);
 
   const handleMoonClick = (pet: Pet) => {
     setSelectedPet(pet);
     setModalOpen(true);
+  };
+
+  const handleOpenReply = () => {
+    setReplyModalOpen(true);
   };
 
   return (
@@ -68,6 +84,26 @@ export default function Home() {
 
       {/* Pet Modal */}
       <PetModal pet={selectedPet} open={modalOpen} onOpenChange={setModalOpen} />
+
+      {/* Real-time Reply Notification */}
+      {notification && (
+        <ReplyNotification
+          petName={notification.petName}
+          onDismiss={dismissNotification}
+          onOpen={handleOpenReply}
+        />
+      )}
+
+      {/* Reply Modal */}
+      {notification && (
+        <ReplyModal
+          petName={notification.petName}
+          replyContent={notification.replyContent}
+          emotionalTone={notification.emotionalTone}
+          open={replyModalOpen}
+          onOpenChange={setReplyModalOpen}
+        />
+      )}
     </div>
   );
 }
