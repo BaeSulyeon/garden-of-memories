@@ -9,11 +9,13 @@
  */
 
 import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import Moon from "@/components/Moon";
 import NightSky from "@/components/NightSky";
 import PetModal from "@/components/PetModal";
 import ReplyNotification from "@/components/ReplyNotification";
 import ReplyModal from "@/components/ReplyModal";
+import GardenNavigation from "@/components/GardenNavigation";
 import { useReplyNotification } from "@/hooks/useReplyNotification";
 import { samplePets } from "@/data/pets";
 import { Pet } from "@/types/pet";
@@ -41,6 +43,9 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
+      {/* Navigation */}
+      <GardenNavigation />
+
       {/* Night sky background with stars and shooting stars */}
       <NightSky />
 

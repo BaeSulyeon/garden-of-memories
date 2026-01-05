@@ -5,20 +5,22 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import MyGarden from "./pages/MyGarden";
 import LetterHistory from "./pages/LetterHistory";
 
 function Router() {
-  // make sure to consider if you need authentication function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
-      <Route path={"/letters"} component={LetterHistory} />
+      <Route path={"/my-garden"} component={MyGarden} />
+      <Route path={"/letter-history"} component={LetterHistory} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
   );
 }
+
 // NOTE: About Theme
 // - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
 //   to keep consistent foreground/background color across components
