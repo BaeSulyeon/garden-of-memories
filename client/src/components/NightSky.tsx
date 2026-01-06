@@ -2,8 +2,9 @@
  * Design Philosophy: Celestial Poetics
  * Component: NightSky Background
  * - Deep gradient from indigo to black-violet
- * - Random shooting stars every 3-7 seconds
+ * - Random shooting stars every 1-3 seconds
  * - Small twinkling stars scattered across the sky
+ * - Diagonal animation from top-left to bottom-right
  */
 
 import { useEffect, useRef, useState } from "react";
@@ -102,13 +103,21 @@ export default function NightSky() {
 
   // Shooting stars with state management
   const [shootingStars, setShootingStars] = useState<ShootingStar[]>([]);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  // Preload shooting star image
+  useEffect(() => {
+    const img = new Image();
+    img.src = "/images/shooting-star.png";
+    img.onload = () => setImageLoaded(true);
+  }, []);
 
   useEffect(() => {
     const createShootingStar = () => {
       const newStar: ShootingStar = {
         id: nextIdRef.current++,
-        left: `${Math.random() * 60 + 20}%`,
-        top: `${Math.random() * 40}%`,
+        left: `${Math.random() * 20}%`, // 왼쪽 상단
+        top: `${Math.random() * 20}%`,
         delay: 0,
       };
       setShootingStars((prev: ShootingStar[]) => [...prev, newStar]);
@@ -116,14 +125,20 @@ export default function NightSky() {
       // Remove after animation completes
       setTimeout(() => {
         setShootingStars((prev: ShootingStar[]) => prev.filter((star: ShootingStar) => star.id !== newStar.id));
-      }, 1500);
+      }, 2500);
     };
 
-    // Create shooting stars at random intervals (3-7 seconds)
+    // Create shooting stars at random intervals (1-3 seconds) with 1-2 stars
     const scheduleNext = () => {
-      const delay = Math.random() * 4000 + 3000;
+      const delay = Math.random() * 2000 + 1000; // 1-3초
       setTimeout(() => {
-        createShootingStar();
+        // 1-2개의 별똥별 생성
+        const count = Math.random() > 0.6 ? 2 : 1;
+        for (let i = 0; i < count; i++) {
+          setTimeout(() => {
+            createShootingStar();
+          }, i * 200); // 200ms 간격으로 생성
+        }
         scheduleNext();
       }, delay);
     };
@@ -150,10 +165,10 @@ export default function NightSky() {
       />
 
       {/* Shooting stars */}
-      {shootingStars.map((star: ShootingStar) => (
+      {imageLoaded && shootingStars.map((star: ShootingStar) => (
         <div
           key={star.id}
-          className="absolute animate-shooting-star"
+          className="absolute animate-shooting-star-diagonal"
           style={{
             left: star.left,
             top: star.top,
@@ -162,7 +177,7 @@ export default function NightSky() {
           <img
             src="/images/shooting-star.png"
             alt=""
-            className="w-32 h-auto opacity-90"
+            className="w-16 h-auto opacity-90"
             style={{
               filter: "drop-shadow(0 0 8px rgba(255, 255, 255, 0.6))",
             }}
