@@ -1,16 +1,21 @@
 export interface Pet {
   id: number;
   name: string;
-  species: string;
-  age?: string;
+  type?: string; // 강아지, 고양이 등
+  gender?: string; // 수컷, 암컷
+  species?: string;
+  age?: number | string;
   favoriteFood?: string;
   story: string;
   photo?: string;
+  profileImage?: string; // 대표 사진 URL
+  description?: string; // 반려동물 설명
   dateOfPassing?: string;
-  moonType: "full" | "crescent" | "gibbous";
-  position: {
+  status?: "함께하는 중" | "영원한 인연";
+  moonType?: "full" | "crescent" | "gibbous";
+  position?: {
     x: number; // percentage
     y: number; // percentage
   };
-  size: "small" | "medium" | "large";
+  size?: "small" | "medium" | "large";
 }

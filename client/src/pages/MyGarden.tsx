@@ -14,6 +14,7 @@ import AddPetModal from "@/components/AddPetModal";
 import PetCard from "@/components/PetCard";
 import CosmicBackButton from "@/components/CosmicBackButton";
 import { trpc } from "@/lib/trpc";
+import { usePetContext } from "@/contexts/PetContext";
 
 interface UserPet {
   id: number;
@@ -27,6 +28,7 @@ interface UserPet {
 }
 
 export default function MyGarden() {
+  const { updatePet: updatePetInContext } = usePetContext();
   const [pets, setPets] = useState<UserPet[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -69,6 +71,14 @@ export default function MyGarden() {
     };
     setPets([...pets, pet]);
     setIsAddModalOpen(false);
+  };
+
+  const handlePetUpdate = (updatedPet: UserPet) => {
+    setPets((prevPets) =>
+      prevPets.map((pet) => (pet.id === updatedPet.id ? updatedPet : pet))
+    );
+    // Context에도 업데이트 (메인 페이지 동기화용)
+    updatePetInContext(updatedPet.id, updatedPet as any);
   };
 
   return (
@@ -129,7 +139,11 @@ export default function MyGarden() {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12">
                 {pets.map((pet) => (
-                  <PetCard key={pet.id} pet={pet} />
+                  <PetCard
+                    key={pet.id}
+                    pet={pet}
+                    onPetUpdate={handlePetUpdate}
+                  />
                 ))}
               </div>
 

@@ -109,8 +109,8 @@ export default function Moon({ pet, onClick }: MoonProps) {
     <div
       className="absolute cursor-pointer transition-all duration-700 ease-out"
       style={{
-        left: `${pet.position.x}%`,
-        top: `${pet.position.y}%`,
+        left: `${pet.position?.x ?? 50}%`,
+        top: `${pet.position?.y ?? 50}%`,
         transform: "translate(-50%, -50%)",
       }}
       onClick={onClick}

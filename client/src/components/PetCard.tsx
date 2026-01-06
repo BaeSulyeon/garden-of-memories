@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Heart, ChevronLeft, ChevronRight, Edit2 } from "lucide-react";
 import { motion } from "framer-motion";
 import PhotoEditModal from "./PhotoEditModal";
+import EditPetModal from "./EditPetModal";
+import { Pet as PetType } from "@/types/pet";
 
 interface Photo {
   id?: number;
@@ -26,11 +28,13 @@ interface PetCardProps {
   pet: Pet;
   photos?: Photo[];
   onPhotosUpdate?: (petId: number, photos: Photo[]) => void;
+  onPetUpdate?: (updatedPet: Pet) => void;
 }
 
-export default function PetCard({ pet, photos = [], onPhotosUpdate }: PetCardProps) {
+export default function PetCard({ pet, photos = [], onPhotosUpdate, onPetUpdate }: PetCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditPetModalOpen, setIsEditPetModalOpen] = useState(false);
   const [editPhotos, setEditPhotos] = useState<Photo[]>(photos);
 
   // 사진이 없으면 기본 이미지 사용
@@ -141,9 +145,9 @@ export default function PetCard({ pet, photos = [], onPhotosUpdate }: PetCardPro
 
             {/* 편집 버튼 */}
             <button
-              onClick={() => setIsEditModalOpen(true)}
+              onClick={() => setIsEditPetModalOpen(true)}
               className="absolute bottom-3 right-3 z-20 bg-pink-500/80 hover:bg-pink-600 rounded-full p-2 transition-colors"
-              title="사진 편집"
+              title="정보 편집"
             >
               <Edit2 className="w-4 h-4 text-white" />
             </button>
@@ -185,6 +189,19 @@ export default function PetCard({ pet, photos = [], onPhotosUpdate }: PetCardPro
         photos={editPhotos}
         onPhotosChange={handlePhotosChange}
         petName={pet.name}
+      />
+
+      {/* 반려동물 정보 편집 모달 */}
+      <EditPetModal
+        pet={pet as unknown as PetType}
+        isOpen={isEditPetModalOpen}
+        onClose={() => setIsEditPetModalOpen(false)}
+        onSave={(updatedPet) => {
+          if (onPetUpdate) {
+            onPetUpdate(updatedPet as unknown as Pet);
+          }
+          setIsEditPetModalOpen(false);
+        }}
       />
     </>
   );

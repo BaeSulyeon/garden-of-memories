@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { PetProvider } from "./contexts/PetContext";
 import Home from "./pages/Home";
 import MyGarden from "./pages/MyGarden";
 import LetterHistory from "./pages/LetterHistory";
@@ -35,10 +36,12 @@ function App() {
         defaultTheme="dark"
         // switchable
       >
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
+        <PetProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </PetProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );
