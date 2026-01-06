@@ -180,3 +180,10 @@
 - [x] CosmicBackButton에서 petAdded 이벤트 발생
 - [x] MyGarden에서 뒤로가기 시 이벤트 발생
 - [x] 전체 기능 테스트
+
+
+## Phase 21: 나의 정원에서 직접 추가한 반려동물이 기억의 정원에 반영 안 되는 버그 수정
+- [x] AddPetModal에서 petAdded 이벤트 발생 확인
+- [x] MyGarden에서 반려동물 추가 후 Home으로 이동 시 동기화 로직 확인
+- [x] 문제 원인 파악 및 수정
+- [x] 전체 기능 테스트

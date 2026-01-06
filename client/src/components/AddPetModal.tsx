@@ -90,8 +90,7 @@ export default function AddPetModal({
       !formData.name ||
       !formData.type ||
       !formData.gender ||
-      !formData.age ||
-      !formData.imageUrl
+      !formData.age
     ) {
       alert("모든 필드를 입력해주세요.");
       return;
@@ -102,7 +101,7 @@ export default function AddPetModal({
       type: formData.type,
       gender: formData.gender,
       age: parseInt(formData.age),
-      imageUrl: formData.imageUrl,
+      imageUrl: formData.imageUrl || "/images/default-pet.png",
       status: formData.status,
       moonDesign: formData.moonDesign,
     });

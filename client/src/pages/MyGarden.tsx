@@ -79,10 +79,22 @@ export default function MyGarden() {
   const handleAddPet = (newPet: Omit<UserPet, "id" | "createdAt"> & { status: "active" | "memorial"; moonDesign: string }) => {
     const pet: UserPet = {
       ...newPet,
-      id: pets.length + 1,
+      id: Math.max(...pets.map(p => p.id), 0) + 1,
       createdAt: new Date(),
     };
-    setPets([...pets, pet]);
+    const updatedPets = [...pets, pet];
+    setPets(updatedPets);
+    
+    // localStorage에 저장
+    try {
+      const existingPets = localStorage.getItem("userPets");
+      const savedPets = existingPets ? JSON.parse(existingPets) : [];
+      const newSavedPets = [...savedPets, pet];
+      localStorage.setItem("userPets", JSON.stringify(newSavedPets));
+    } catch (error) {
+      console.error("Failed to save pet to localStorage:", error);
+    }
+    
     setIsAddModalOpen(false);
     
     // 홈 화면에 petAdded 이벤트 발생

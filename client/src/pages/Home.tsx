@@ -26,8 +26,23 @@ export default function Home() {
   const [modalOpen, setModalOpen] = useState(false);
   const [replyModalOpen, setReplyModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [pets, setPets] = useState<Pet[]>(samplePets);
   const { notification, dismissNotification, registerUser } =
     useReplyNotification();
+
+  // localStorage에서 반려동물 데이터 로드
+  useEffect(() => {
+    const savedPets = localStorage.getItem("userPets");
+    if (savedPets) {
+      try {
+        const parsedPets = JSON.parse(savedPets);
+        setPets([...samplePets, ...parsedPets]);
+      } catch (error) {
+        console.error("Failed to parse saved pets:", error);
+        setPets(samplePets);
+      }
+    }
+  }, [refreshKey]);
 
   // 홈 화면 새로고침 함수 (전역 상태 업데이트)
   const refreshHome = useCallback(() => {
@@ -37,7 +52,10 @@ export default function Home() {
   // 전역 이벤트 리스너 등록
   useEffect(() => {
     const handlePetAdded = () => {
-      refreshHome();
+      // 약간의 지연을 주어 localStorage 업데이트를 기다림
+      setTimeout(() => {
+        refreshHome();
+      }, 100);
     };
     window.addEventListener("petAdded", handlePetAdded);
     return () => window.removeEventListener("petAdded", handlePetAdded);
@@ -102,7 +120,7 @@ export default function Home() {
 
       {/* Moons (Pets) */}
       <div key={refreshKey} className="relative z-10 w-full h-[calc(100vh-180px)] md:h-[calc(100vh-200px)] min-h-[500px] md:min-h-[600px]">
-        {samplePets.map((pet) => (
+        {pets.map((pet) => (
           <Moon key={pet.id} pet={pet} onClick={() => handleMoonClick(pet)} />
         ))}
       </div>
