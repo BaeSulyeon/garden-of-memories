@@ -8,6 +8,7 @@
  */
 
 import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Plus, Heart } from "lucide-react";
 import AddPetModal from "@/components/AddPetModal";
@@ -30,9 +31,20 @@ interface UserPet {
 
 export default function MyGarden() {
   const { updatePet: updatePetInContext } = usePetContext();
+  const [, setLocation] = useLocation();
   const [pets, setPets] = useState<UserPet[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  // URL 파라미터 확인하여 모달 자동 열기
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("modal") === "add-pet") {
+      setIsAddModalOpen(true);
+      // URL에서 파라미터 제거
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
 
   // 반려동물 목록 조회 (실제로는 tRPC 쿼리 사용)
   useEffect(() => {
@@ -72,6 +84,9 @@ export default function MyGarden() {
     };
     setPets([...pets, pet]);
     setIsAddModalOpen(false);
+    
+    // 홈 화면에 petAdded 이벤트 발생
+    window.dispatchEvent(new Event("petAdded"));
   };
 
   const handlePetUpdate = (updatedPet: UserPet) => {
@@ -167,7 +182,13 @@ export default function MyGarden() {
       {/* 반려동물 추가 모달 */}
       <AddPetModal
         open={isAddModalOpen}
-        onOpenChange={setIsAddModalOpen}
+        onOpenChange={(open) => {
+          setIsAddModalOpen(open);
+          // 모달이 닫힐 때 홈 화면으로 이동
+          if (!open) {
+            setLocation("/");
+          }
+        }}
         onAddPet={handleAddPet}
       />
     </div>

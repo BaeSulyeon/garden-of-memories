@@ -8,7 +8,7 @@
  * - Real-time reply notifications via WebSocket
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
 import Moon from "@/components/Moon";
 import NightSky from "@/components/NightSky";
@@ -25,8 +25,23 @@ export default function Home() {
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [replyModalOpen, setReplyModalOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
   const { notification, dismissNotification, registerUser } =
     useReplyNotification();
+
+  // 홈 화면 새로고침 함수 (전역 상태 업데이트)
+  const refreshHome = useCallback(() => {
+    setRefreshKey((prev) => prev + 1);
+  }, []);
+
+  // 전역 이벤트 리스너 등록
+  useEffect(() => {
+    const handlePetAdded = () => {
+      refreshHome();
+    };
+    window.addEventListener("petAdded", handlePetAdded);
+    return () => window.removeEventListener("petAdded", handlePetAdded);
+  }, [refreshHome]);
 
   // 사용자 등록 (실제로는 인증 시스템에서 가져와야 함)
   useEffect(() => {
@@ -70,8 +85,23 @@ export default function Home() {
         </p>
       </header>
 
+      {/* Add Moon Button */}
+      <div className="relative z-10 flex justify-center pb-4 md:pb-6 px-4">
+        <button
+          onClick={() => setLocation("/my-garden?modal=add-pet")}
+          className="px-6 md:px-8 py-2 md:py-3 border border-foreground/80 hover:border-foreground text-foreground hover:text-foreground/90 transition-all duration-300 rounded-lg text-sm md:text-base"
+          style={{
+            fontFamily: "var(--font-body)",
+            backgroundColor: "transparent",
+            backdropFilter: "blur(4px)",
+          }}
+        >
+          나의 달 띄우기
+        </button>
+      </div>
+
       {/* Moons (Pets) */}
-      <div className="relative z-10 w-full h-[calc(100vh-180px)] md:h-[calc(100vh-200px)] min-h-[500px] md:min-h-[600px]">
+      <div key={refreshKey} className="relative z-10 w-full h-[calc(100vh-180px)] md:h-[calc(100vh-200px)] min-h-[500px] md:min-h-[600px]">
         {samplePets.map((pet) => (
           <Moon key={pet.id} pet={pet} onClick={() => handleMoonClick(pet)} />
         ))}
