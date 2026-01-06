@@ -125,20 +125,15 @@ export default function NightSky() {
       // Remove after animation completes
       setTimeout(() => {
         setShootingStars((prev: ShootingStar[]) => prev.filter((star: ShootingStar) => star.id !== newStar.id));
-      }, 2500);
+      }, 3500);
     };
 
-    // Create shooting stars at random intervals (1-3 seconds) with 1-2 stars
+    // Create shooting stars at random intervals (2-4 seconds) with 1 star
     const scheduleNext = () => {
-      const delay = Math.random() * 2000 + 1000; // 1-3초
+      const delay = Math.random() * 2000 + 2000; // 2-4초
       setTimeout(() => {
-        // 1-2개의 별똥별 생성
-        const count = Math.random() > 0.6 ? 2 : 1;
-        for (let i = 0; i < count; i++) {
-          setTimeout(() => {
-            createShootingStar();
-          }, i * 200); // 200ms 간격으로 생성
-        }
+        // 하나의 별똥별만 생성
+        createShootingStar();
         scheduleNext();
       }, delay);
     };

@@ -191,14 +191,14 @@
   
   @keyframes shooting-star-diagonal {
     0% {
-      transform: translateX(0) translateY(0) rotate(-45deg);
+      transform: translateX(0) translateY(0) rotate(45deg);
       opacity: 1;
     }
     70% {
       opacity: 1;
     }
     100% {
-      transform: translateX(120vw) translateY(120vh) rotate(-45deg);
+      transform: translateX(120vw) translateY(120vh) rotate(45deg);
       opacity: 0;
     }
   }
@@ -234,7 +234,7 @@
   }
   
   .animate-shooting-star-diagonal {
-    animation: shooting-star-diagonal 2s linear forwards;
+    animation: shooting-star-diagonal 3.5s linear forwards;
   }
   
   .animate-float {
