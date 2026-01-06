@@ -76,7 +76,7 @@ export default function MyGarden() {
     setIsLoading(false);
   }, []);
 
-  const handleAddPet = (newPet: Omit<UserPet, "id" | "createdAt"> & { status: "active" | "memorial"; moonDesign: string }) => {
+  const handleAddPet = (newPet: any) => {
     const pet: UserPet = {
       ...newPet,
       id: Math.max(...pets.map(p => p.id), 0) + 1,

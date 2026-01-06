@@ -193,3 +193,14 @@
 - [x] Home.tsx에서 반려동물 데이터 확인
 - [x] samplePets와 localStorage 데이터 병합 시 중복 제거 로직 추가
 - [x] 전체 기능 테스트
+
+
+## Phase 23: AddPetModal 먼8다른스녌 구현 및 기억/편지 기능 추가
+- [x] Pet 타입에 memories, userLetter, aiLetter 필드 추가
+- [x] AddPetModal을 먼8다른스녌 모달으로 변경 (Step 1: 기본 정보, Step 2: 기억들, Step 3: 편지)
+- [x] '추가하기' 버튼을 '다음으로' 버튼으로 변경
+- [x] 기억 갤러리 업로드 기능 구현
+- [x] 사용자 편지 입력 기능 구현
+- [x] AI 답장 편지 입력 기능 구현
+- [x] PetProfileModal에서 모든 정보 표시
+- [x] 전체 기능 테스트
