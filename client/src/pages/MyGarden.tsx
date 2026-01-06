@@ -8,7 +8,6 @@
  */
 
 import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Plus, Heart } from "lucide-react";
 import AddPetModal from "@/components/AddPetModal";
@@ -16,6 +15,8 @@ import PetCard from "@/components/PetCard";
 import CosmicBackButton from "@/components/CosmicBackButton";
 import { trpc } from "@/lib/trpc";
 import { usePetContext } from "@/contexts/PetContext";
+import { Link } from "wouter";
+import { toast } from "sonner";
 
 interface UserPet {
   id: number;
@@ -31,20 +32,9 @@ interface UserPet {
 
 export default function MyGarden() {
   const { updatePet: updatePetInContext } = usePetContext();
-  const [, setLocation] = useLocation();
   const [pets, setPets] = useState<UserPet[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
-  // URL 파라미터 확인하여 모달 자동 열기
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("modal") === "add-pet") {
-      setIsAddModalOpen(true);
-      // URL에서 파라미터 제거
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  }, []);
 
   // 반려동물 목록 조회 (실제로는 tRPC 쿼리 사용)
   useEffect(() => {
@@ -76,29 +66,38 @@ export default function MyGarden() {
     setIsLoading(false);
   }, []);
 
-  const handleAddPet = (newPet: any) => {
+  const handleAddPet = (newPet: Omit<UserPet, "id" | "createdAt"> & { status: "active" | "memorial"; moonDesign: string }) => {
     const pet: UserPet = {
       ...newPet,
-      id: Math.max(...pets.map(p => p.id), 0) + 1,
+      id: pets.length + 1,
       createdAt: new Date(),
     };
-    const updatedPets = [...pets, pet];
-    setPets(updatedPets);
-    
-    // localStorage에 저장
-    try {
-      const existingPets = localStorage.getItem("userPets");
-      const savedPets = existingPets ? JSON.parse(existingPets) : [];
-      const newSavedPets = [...savedPets, pet];
-      localStorage.setItem("userPets", JSON.stringify(newSavedPets));
-    } catch (error) {
-      console.error("Failed to save pet to localStorage:", error);
-    }
-    
+    setPets([...pets, pet]);
     setIsAddModalOpen(false);
-    
-    // 홈 화면에 petAdded 이벤트 발생
-    window.dispatchEvent(new Event("petAdded"));
+
+    // AI 답장 알림 팝업 - 2초 후 표시
+    setTimeout(() => {
+      toast(
+        <div className="flex flex-col gap-3">
+          <p className="text-sm font-medium">
+            💌 <span className="font-bold text-pink-400">{pet.name}</span>로부터 답장이 도착했습니다!
+          </p>
+          <Button
+            onClick={() => {
+              toast.dismiss();
+              window.location.href = `/pet/${pet.id}`;
+            }}
+            className="w-full bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 text-white text-sm"
+          >
+            답장보기
+          </Button>
+        </div>,
+        {
+          duration: 10000,
+          position: "top-center",
+        }
+      );
+    }, 2000);
   };
 
   const handlePetUpdate = (updatedPet: UserPet) => {
@@ -194,13 +193,7 @@ export default function MyGarden() {
       {/* 반려동물 추가 모달 */}
       <AddPetModal
         open={isAddModalOpen}
-        onOpenChange={(open) => {
-          setIsAddModalOpen(open);
-          // 모달이 닫힐 때 홈 화면으로 이동
-          if (!open) {
-            setLocation("/");
-          }
-        }}
+        onOpenChange={setIsAddModalOpen}
         onAddPet={handleAddPet}
       />
     </div>

@@ -6,15 +6,13 @@ export default function CosmicBackButton() {
   const [, setLocation] = useLocation();
 
   const handleBack = () => {
-    // 홈 화면에 petAdded 이벤트 발생
-    window.dispatchEvent(new Event("petAdded"));
     setLocation("/");
   };
 
   return (
     <motion.button
       onClick={handleBack}
-      className="group relative inline-flex items-center gap-2 px-6 py-3 rounded-full overflow-hidden cursor-pointer"
+      className="group relative inline-flex items-center gap-2 px-6 py-3 rounded-full overflow-hidden"
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
     >

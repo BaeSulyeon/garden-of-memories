@@ -8,12 +8,11 @@
  * - Real-time reply notifications via WebSocket
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import Moon from "@/components/Moon";
 import NightSky from "@/components/NightSky";
 import PetModal from "@/components/PetModal";
-import PetProfileModal from "@/components/PetProfileModal";
 import ReplyNotification from "@/components/ReplyNotification";
 import ReplyModal from "@/components/ReplyModal";
 import GardenNavigation from "@/components/GardenNavigation";
@@ -25,48 +24,9 @@ export default function Home() {
   const [, setLocation] = useLocation();
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [replyModalOpen, setReplyModalOpen] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
-  const [pets, setPets] = useState<Pet[]>(samplePets);
   const { notification, dismissNotification, registerUser } =
     useReplyNotification();
-
-  // localStorage에서 반려동물 데이터 로드
-  useEffect(() => {
-    const savedPets = localStorage.getItem("userPets");
-    if (savedPets) {
-      try {
-        const parsedPets = JSON.parse(savedPets);
-        // samplePets의 id와 중복되지 않는 반려동물만 필터링
-        const samplePetIds = new Set(samplePets.map(pet => pet.id));
-        const uniqueUserPets = parsedPets.filter((pet: Pet) => !samplePetIds.has(pet.id));
-        setPets([...samplePets, ...uniqueUserPets]);
-      } catch (error) {
-        console.error("Failed to parse saved pets:", error);
-        setPets(samplePets);
-      }
-    } else {
-      setPets(samplePets);
-    }
-  }, [refreshKey]);
-
-  // 홈 화면 새로고침 함수 (전역 상태 업데이트)
-  const refreshHome = useCallback(() => {
-    setRefreshKey((prev) => prev + 1);
-  }, []);
-
-  // 전역 이벤트 리스너 등록
-  useEffect(() => {
-    const handlePetAdded = () => {
-      // 약간의 지연을 주어 localStorage 업데이트를 기다림
-      setTimeout(() => {
-        refreshHome();
-      }, 100);
-    };
-    window.addEventListener("petAdded", handlePetAdded);
-    return () => window.removeEventListener("petAdded", handlePetAdded);
-  }, [refreshHome]);
 
   // 사용자 등록 (실제로는 인증 시스템에서 가져와야 함)
   useEffect(() => {
@@ -74,8 +34,7 @@ export default function Home() {
   }, [registerUser]);
 
   const handleMoonClick = (pet: Pet) => {
-    setSelectedPet(pet);
-    setProfileModalOpen(true);
+    setLocation(`/pet/${pet.id}`);
   };
 
   const handleOpenReply = () => {
@@ -111,24 +70,19 @@ export default function Home() {
         </p>
       </header>
 
-      {/* Add Moon Button */}
-      <div className="relative z-10 flex justify-center pb-4 md:pb-6 px-4">
+      {/* 나의 달 띄우기 버튼 */}
+      <div className="relative z-10 flex justify-center mb-4">
         <button
           onClick={() => setLocation("/my-garden?modal=add-pet")}
-          className="px-6 md:px-8 py-2 md:py-3 border border-foreground/80 hover:border-foreground text-foreground hover:text-foreground/90 transition-all duration-300 rounded-lg text-sm md:text-base"
-          style={{
-            fontFamily: "var(--font-body)",
-            backgroundColor: "transparent",
-            backdropFilter: "blur(4px)",
-          }}
+          className="px-6 py-2 border border-white rounded-lg text-white hover:bg-white/10 transition-all duration-300 font-medium"
         >
           나의 달 띄우기
         </button>
       </div>
 
       {/* Moons (Pets) */}
-      <div key={refreshKey} className="relative z-10 w-full h-[calc(100vh-180px)] md:h-[calc(100vh-200px)] min-h-[500px] md:min-h-[600px]">
-        {pets.map((pet) => (
+      <div className="relative z-10 w-full h-[calc(100vh-180px)] md:h-[calc(100vh-200px)] min-h-[500px] md:min-h-[600px]">
+        {samplePets.map((pet) => (
           <Moon key={pet.id} pet={pet} onClick={() => handleMoonClick(pet)} />
         ))}
       </div>
@@ -154,13 +108,6 @@ export default function Home() {
           onOpen={handleOpenReply}
         />
       )}
-
-      {/* Pet Profile Modal */}
-      <PetProfileModal
-        pet={selectedPet}
-        open={profileModalOpen}
-        onOpenChange={setProfileModalOpen}
-      />
 
       {/* Reply Modal */}
       {notification && (

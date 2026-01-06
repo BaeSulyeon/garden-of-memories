@@ -19,7 +19,4 @@ export interface Pet {
     y: number; // percentage
   };
   size?: "small" | "medium" | "large";
-  memories?: string[]; // 기억 사진 URL 배열
-  userLetter?: string; // 사용자가 작성한 편지
-  aiLetter?: string; // AI가 작성한 답장
 }
