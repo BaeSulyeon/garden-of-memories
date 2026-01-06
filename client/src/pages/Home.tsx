@@ -13,6 +13,7 @@ import { useLocation } from "wouter";
 import Moon from "@/components/Moon";
 import NightSky from "@/components/NightSky";
 import PetModal from "@/components/PetModal";
+import { PetProfileModal } from "@/components/PetProfileModal";
 import ReplyNotification from "@/components/ReplyNotification";
 import ReplyModal from "@/components/ReplyModal";
 import GardenNavigation from "@/components/GardenNavigation";
@@ -24,6 +25,7 @@ export default function Home() {
   const [, setLocation] = useLocation();
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [replyModalOpen, setReplyModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [pets, setPets] = useState<Pet[]>(samplePets);
@@ -67,7 +69,8 @@ export default function Home() {
   }, [registerUser]);
 
   const handleMoonClick = (pet: Pet) => {
-    setLocation(`/pet/${pet.id}`);
+    setSelectedPet(pet);
+    setProfileModalOpen(true);
   };
 
   const handleOpenReply = () => {
@@ -137,6 +140,9 @@ export default function Home() {
 
       {/* Pet Modal */}
       <PetModal pet={selectedPet} open={modalOpen} onOpenChange={setModalOpen} />
+
+      {/* Pet Profile Modal */}
+      <PetProfileModal pet={selectedPet} isOpen={profileModalOpen} onClose={() => setProfileModalOpen(false)} />
 
       {/* Real-time Reply Notification */}
       {notification && (
