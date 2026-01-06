@@ -139,3 +139,13 @@
 - [x] Pet 타입에 moonDesign 필드 추가
 - [x] 메인 페이지 실시간 동기화
 - [x] 전체 기능 테스트
+
+## Phase 16: 실제 달 사진으로 디자인 대체
+- [x] 8개의 실제 달 사진 파일 저장 (/public/images/moon-designs/)
+- [x] moonDesignsImages.ts 유틸리티 파일 생성 (이미지 경로 관리)
+- [x] AddPetModal.tsx 업데이트 (이미지 기반 선택 UI)
+- [x] Moon.tsx 컴포넌트 업데이트 (이미지 렌더링)
+- [x] Pet 타입 업데이트 (moonDesign: string)
+- [x] 샘플 데이터 마이그레이션 (캔버스 → 이미지)
+- [x] 메인 페이지 실시간 동기화 확인
+- [x] 전체 기능 테스트

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Upload } from "lucide-react";
-import { MOON_DESIGNS, MOON_DESIGN_LABELS, drawMoon, type MoonDesignType } from "@/utils/moonDesigns";
+import { MOON_DESIGNS } from "@/utils/moonDesignsImages";
 
 interface AddPetModalProps {
   open: boolean;
@@ -29,7 +29,7 @@ interface AddPetModalProps {
     age: number;
     imageUrl: string;
     status: "active" | "memorial";
-    moonDesign: MoonDesignType;
+    moonDesign: string;
   }) => void;
 }
 
@@ -56,7 +56,7 @@ export default function AddPetModal({
     age: string;
     imageUrl: string;
     status: "active" | "memorial";
-    moonDesign: MoonDesignType;
+    moonDesign: string;
   }>({
     name: "",
     type: "",
@@ -64,26 +64,11 @@ export default function AddPetModal({
     age: "",
     imageUrl: "",
     status: "active",
-    moonDesign: "full-bright",
+    moonDesign: "moon-1",
   });
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const canvasRefs = useRef<Record<MoonDesignType, HTMLCanvasElement | null>>({} as Record<MoonDesignType, HTMLCanvasElement | null>);
-
-  // 달 디자인 미리보기 그리기
-  useEffect(() => {
-    MOON_DESIGNS.forEach((design) => {
-      const canvas = canvasRefs.current[design];
-      if (canvas) {
-        const ctx = canvas.getContext("2d");
-        if (ctx) {
-          canvas.width = 80;
-          canvas.height = 80;
-          drawMoon(ctx, 80, design);
-        }
-      }
-    });
-  }, []);
+  const [selectedMoonIndex, setSelectedMoonIndex] = useState(0);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -276,35 +261,48 @@ export default function AddPetModal({
           </div>
 
           {/* 달 디자인 선택 */}
-          <div className="space-y-2">
-            <Label>달 디자인 선택</Label>
-            <div className="grid grid-cols-4 gap-2">
-              {MOON_DESIGNS.map((design) => (
+          <div className="space-y-3">
+            <Label className="text-base font-semibold">달 디자인 선택</Label>
+            <div className="grid grid-cols-4 gap-3">
+              {MOON_DESIGNS.map((design, index) => (
                 <button
-                  key={design}
+                  key={design.id}
                   type="button"
-                  onClick={() =>
-                    setFormData((prev) => ({ ...prev, moonDesign: design }))
-                  }
-                  className={`p-2 rounded-lg border-2 transition-all ${
-                    formData.moonDesign === design
-                      ? "border-pink-400 bg-pink-400/10"
-                      : "border-muted-foreground/30 hover:border-muted-foreground/50"
+                  onClick={() => {
+                    setFormData((prev) => ({ ...prev, moonDesign: design.id }));
+                    setSelectedMoonIndex(index);
+                  }}
+                  className={`relative rounded-lg overflow-hidden border-2 transition-all ${
+                    formData.moonDesign === design.id
+                      ? "border-pink-400 ring-2 ring-pink-300"
+                      : "border-gray-300 hover:border-pink-200"
                   }`}
-                  title={MOON_DESIGN_LABELS[design]}
                 >
-                  <canvas
-                    ref={(el) => {
-                      if (el) canvasRefs.current[design] = el;
-                    }}
-                    className="w-full h-auto"
+                  <img
+                    src={design.imagePath}
+                    alt={design.name}
+                    className="w-full h-24 object-cover"
                   />
+                  <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors" />
+                  <p className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs py-1 px-2 text-center">
+                    {design.name}
+                  </p>
                 </button>
               ))}
             </div>
-            <p className="text-xs text-muted-foreground text-center">
-              {MOON_DESIGN_LABELS[formData.moonDesign]}
-            </p>
+
+            {/* 선택된 달 미리보기 */}
+            <div className="flex justify-center mt-4">
+              <div className="text-center">
+                <p className="text-sm text-gray-400 mb-2">선택된 달</p>
+                <img
+                  src={MOON_DESIGNS[selectedMoonIndex].imagePath}
+                  alt="Selected moon"
+                  className="w-32 h-32 rounded-full object-cover shadow-lg"
+                />
+                <p className="mt-2 text-sm font-medium">{MOON_DESIGNS[selectedMoonIndex].name}</p>
+              </div>
+            </div>
           </div>
 
           {/* 버튼 */}
