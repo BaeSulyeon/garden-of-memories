@@ -87,3 +87,45 @@ export const comfortMessages = mysqlTable("comfortMessages", {
 
 export type ComfortMessage = typeof comfortMessages.$inferSelect;
 export type InsertComfortMessage = typeof comfortMessages.$inferInsert;
+
+/**
+ * Pets table - stores user's own pets
+ * Design Philosophy: 나의 정원 (My Garden)
+ * - Users can add their own pets with information and photos
+ * - Each pet has a status (함께하는 중, 영원한 인연)
+ */
+export const pets = mysqlTable("pets", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  type: varchar("type", { length: 100 }).notNull(), // 강아지, 고양이, 토끼, etc.
+  gender: varchar("gender", { length: 50 }).notNull(), // 수컷, 암컷
+  age: int("age"), // 나이 (세)
+  status: mysqlEnum("status", ["함께하는 중", "영원한 인연"]).default("함께하는 중").notNull(),
+  profileImage: text("profileImage"), // S3 URL for main pet photo
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Pet = typeof pets.$inferSelect;
+export type InsertPet = typeof pets.$inferInsert;
+
+/**
+ * Pet photos table - stores multiple photos for each pet
+ * Design Philosophy: 기억들 (Memories)
+ * - Users can upload multiple photos of their pets
+ * - Photos are stored in S3 with metadata
+ * - Users can add, delete, and reorder photos
+ */
+export const petPhotos = mysqlTable("petPhotos", {
+  id: int("id").autoincrement().primaryKey(),
+  petId: int("petId").notNull(),
+  userId: int("userId").notNull(),
+  photoUrl: text("photoUrl").notNull(), // S3 URL
+  displayOrder: int("displayOrder").default(0).notNull(), // For ordering in carousel
+  uploadedAt: timestamp("uploadedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PetPhoto = typeof petPhotos.$inferSelect;
+export type InsertPetPhoto = typeof petPhotos.$inferInsert;
