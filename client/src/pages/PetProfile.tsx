@@ -58,61 +58,124 @@ export default function PetProfile() {
   const [userTributed, setUserTributed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 샘플 데이터 로드
+  // 동적 데이터 로드
   useEffect(() => {
-    const samplePet: PetProfileData = {
-      id: 1,
-      name: "별이",
-      type: "강아지",
-      gender: "수컷",
-      age: 5,
-      profileImage: "/images/moon-1.png",
-      status: "영원한 인연",
-      photos: [
-        { id: 1, url: "/images/moon-1.png" },
-        { id: 2, url: "/images/moon-2.png" },
-        { id: 3, url: "/images/moon-3.png" },
-      ],
-      letters: [
-        {
-          id: 1,
-          content: "별이, 너무 그리워. 함께 있던 시간들이 얼마나 소중했는지 이제야 알겠어.",
-          createdAt: "2024-12-20",
-          reply: {
-            content: "당신의 사랑이 나를 이곳에서도 따뜻하게 감싸고 있어. 우리의 추억은 영원해.",
-            createdAt: "2024-12-21",
-            status: "replied",
+    if (!match || !params?.id) {
+      setIsLoading(false);
+      return;
+    }
+
+    const loadPetData = async () => {
+      try {
+        const petId = parseInt(params.id);
+        
+        // 샘플 데이터 (실제 구현 시 API 호출로 변경)
+        const samplePets: Record<number, PetProfileData> = {
+          1: {
+            id: 1,
+            name: "별이",
+            type: "강아지",
+            gender: "수컷",
+            age: 5,
+            profileImage: "/images/moon-1.png",
+            status: "영원한 인연",
+            photos: [
+              { id: 1, url: "/images/moon-1.png" },
+              { id: 2, url: "/images/moon-2.png" },
+              { id: 3, url: "/images/moon-3.png" },
+            ],
+            letters: [
+              {
+                id: 1,
+                content: "별이, 너무 그리워. 함께 있던 시간들이 얼마나 소중했는지 이제야 알겠어.",
+                createdAt: "2024-12-20",
+                reply: {
+                  content: "당신의 사랑이 나를 이곳에서도 따뜻하게 감싸고 있어. 우리의 추억은 영원해.",
+                  createdAt: "2024-12-21",
+                  status: "replied",
+                },
+              },
+              {
+                id: 2,
+                content: "오늘도 너를 생각했어. 언제쯤 이 마음이 편해질까?",
+                createdAt: "2024-12-25",
+                reply: undefined,
+              },
+            ],
+            tributes: 24,
+            comments: [
+              {
+                id: 1,
+                userName: "익명",
+                content: "별이를 추모합니다. 함께 있던 모든 순간이 소중했을 거예요.",
+                createdAt: "2024-12-22",
+                isAnonymous: true,
+              },
+              {
+                id: 2,
+                userName: "사용자A",
+                content: "별이의 기억이 영원히 남기를 바랍니다. 힘내세요.",
+                createdAt: "2024-12-23",
+                isAnonymous: false,
+              },
+            ],
           },
-        },
-        {
-          id: 2,
-          content: "오늘도 너를 생각했어. 언제쯤 이 마음이 편해질까?",
-          createdAt: "2024-12-25",
-          reply: undefined,
-        },
-      ],
-      tributes: 24,
-      comments: [
-        {
-          id: 1,
-          userName: "익명",
-          content: "별이를 추모합니다. 함께 있던 모든 순간이 소중했을 거예요.",
-          createdAt: "2024-12-22",
-          isAnonymous: true,
-        },
-        {
-          id: 2,
-          userName: "사용자A",
-          content: "별이의 기억이 영원히 남기를 바랍니다. 힘내세요.",
-          createdAt: "2024-12-23",
-          isAnonymous: false,
-        },
-      ],
+          3: {
+            id: 3,
+            name: "나비",
+            type: "고양이",
+            gender: "암컷",
+            age: 3,
+            profileImage: "/images/moon-2.png",
+            status: "함께하는 중",
+            photos: [{ id: 1, url: "/images/moon-2.png" }],
+            letters: [],
+            tributes: 0,
+            comments: [],
+          },
+          4: {
+            id: 4,
+            name: "초롱",
+            type: "강아지",
+            gender: "수컷",
+            age: 6,
+            profileImage: "/images/moon-4.png",
+            status: "함께하는 중",
+            photos: [{ id: 1, url: "/images/moon-4.png" }],
+            letters: [
+              {
+                id: 3,
+                content: "초롱아, 너와 함께한 모든 시간이 정말 소중해. 너의 밝은 에너지와 순수한 마음이 그리워. 언제나 내 곁에 있어줘서 고마워. 영원히 사랑해.",
+                createdAt: new Date().toISOString().split("T")[0],
+                reply: {
+                  content: "당신의 사랑이 나를 이곳에서도 따뜻하게 감싸고 있습니다. 함께한 모든 순간에 감사합니다. 당신이 나의 삶을 특별하게 만들어주었어요.",
+                  createdAt: new Date().toISOString().split("T")[0],
+                  status: "replied",
+                },
+              },
+            ],
+            tributes: 0,
+            comments: [],
+          },
+        };
+
+        const petData = samplePets[petId];
+        if (petData) {
+          setPet(petData);
+        } else {
+          toast.error("반려동물을 찾을 수 없습니다.");
+          setLocation("/my-garden");
+        }
+      } catch (error) {
+        console.error("Error loading pet data:", error);
+        toast.error("데이터를 불러올 수 없습니다.");
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    setPet(samplePet);
-    setIsLoading(false);
-  }, []);
+    loadPetData();
+  }, [match, params?.id, setLocation]);
 
   const handleAddTribute = () => {
     if (!userTributed) {

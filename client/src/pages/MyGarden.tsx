@@ -66,7 +66,7 @@ export default function MyGarden() {
     setIsLoading(false);
   }, []);
 
-  const handleAddPet = (newPet: Omit<UserPet, "id" | "createdAt"> & { status: "active" | "memorial"; moonDesign: string }) => {
+  const handleAddPet = async (newPet: Omit<UserPet, "id" | "createdAt"> & { status: "active" | "memorial"; moonDesign: string; userLetter?: string }) => {
     const pet: UserPet = {
       ...newPet,
       id: pets.length + 1,
@@ -74,6 +74,33 @@ export default function MyGarden() {
     };
     setPets([...pets, pet]);
     setIsAddModalOpen(false);
+
+    // 편지를 서버에 제출하여 AI 답장 생성
+    if (newPet.userLetter) {
+      try {
+        const response = await fetch("/api/letters", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: 1,
+            petId: pet.id,
+            petName: pet.name,
+            content: newPet.userLetter,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to submit letter");
+        }
+
+        const data = await response.json();
+        console.log("Letter submitted:", data);
+      } catch (error) {
+        console.error("Error submitting letter:", error);
+      }
+    }
 
     // AI 답장 알림 팝업 - 2초 후 표시
     setTimeout(() => {
