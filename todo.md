@@ -187,3 +187,9 @@
 - [x] MyGarden에서 반려동물 추가 후 Home으로 이동 시 동기화 로직 확인
 - [x] 문제 원인 파악 및 수정
 - [x] 전체 기능 테스트
+
+
+## Bug Fix: React 키 중복 오류
+- [x] Home.tsx에서 반려동물 데이터 확인
+- [x] samplePets와 localStorage 데이터 병합 시 중복 제거 로직 추가
+- [x] 전체 기능 테스트

@@ -36,11 +36,16 @@ export default function Home() {
     if (savedPets) {
       try {
         const parsedPets = JSON.parse(savedPets);
-        setPets([...samplePets, ...parsedPets]);
+        // samplePets의 id와 중복되지 않는 반려동물만 필터링
+        const samplePetIds = new Set(samplePets.map(pet => pet.id));
+        const uniqueUserPets = parsedPets.filter((pet: Pet) => !samplePetIds.has(pet.id));
+        setPets([...samplePets, ...uniqueUserPets]);
       } catch (error) {
         console.error("Failed to parse saved pets:", error);
         setPets(samplePets);
       }
+    } else {
+      setPets(samplePets);
     }
   }, [refreshKey]);
 
