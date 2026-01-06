@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Heart } from "lucide-react";
 import AddPetModal from "@/components/AddPetModal";
 import PetCard from "@/components/PetCard";
+import CosmicBackButton from "@/components/CosmicBackButton";
 import { trpc } from "@/lib/trpc";
 
 interface UserPet {
@@ -80,8 +81,13 @@ export default function MyGarden() {
 
       {/* 콘텐츠 */}
       <div className="relative z-10">
+        {/* 뒤로가기 버튼 */}
+        <div className="pt-6 px-4 md:px-8 flex justify-start">
+          <CosmicBackButton />
+        </div>
+
         {/* 헤더 */}
-        <header className="pt-12 md:pt-16 pb-8 md:pb-12 text-center px-4">
+        <header className="pt-8 md:pt-12 pb-8 md:pb-12 text-center px-4">
           <div className="flex items-center justify-center gap-3 mb-4">
             <Heart className="w-8 h-8 md:w-10 md:h-10 text-pink-400 fill-pink-400" />
             <h1
