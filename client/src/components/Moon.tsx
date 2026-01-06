@@ -1,7 +1,7 @@
 /*
  * Design Philosophy: Celestial Poetics
  * Component: Moon (Individual celestial body)
- * - Image-based moon rendering with real moon pictures
+ * - Canvas-based moon rendering with 8 different designs
  * - Breathing animation (subtle scale pulse)
  * - Soft glow effect with random twinkle
  * - Pet name centered below moon with fade-in
@@ -9,7 +9,8 @@
  */
 
 import { Pet } from "@/types/pet";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { drawMoon } from "@/utils/moonDesigns";
 
 interface MoonProps {
   pet: Pet;
@@ -19,6 +20,7 @@ interface MoonProps {
 export default function Moon({ pet, onClick }: MoonProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [showName, setShowName] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Show name after a delay
   useEffect(() => {
@@ -28,19 +30,23 @@ export default function Moon({ pet, onClick }: MoonProps) {
     return () => clearTimeout(timer);
   }, []);
 
-  // Get moon image based on type
-  const getMoonImage = () => {
-    switch (pet.moonType) {
-      case "full":
-        return "/images/moon-1.png";
-      case "crescent":
-        return "/images/moon-2.png";
-      case "gibbous":
-        return "/images/moon-3.png";
-      default:
-        return "/images/moon-1.png";
-    }
-  };
+  // Draw moon on canvas
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Set canvas size based on moon size
+    const canvasSize = pet.size === "large" ? 200 : pet.size === "medium" ? 160 : 120;
+    canvas.width = canvasSize;
+    canvas.height = canvasSize;
+
+    // Draw moon with selected design
+    const moonDesign = pet.moonDesign || "full-bright";
+    drawMoon(ctx, canvasSize, moonDesign);
+  }, [pet.size, pet.moonDesign]);
 
   // Get size classes (responsive)
   const getSizeClass = () => {
@@ -86,7 +92,7 @@ export default function Moon({ pet, onClick }: MoonProps) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Moon image */}
+      {/* Moon canvas */}
       <div
         className={`${getSizeClass()} animate-breathe animate-twinkle transition-all duration-500 rounded-full overflow-hidden`}
         style={{
@@ -96,10 +102,9 @@ export default function Moon({ pet, onClick }: MoonProps) {
             : "drop-shadow(0 0 12px rgba(255, 255, 255, 0.5))",
         }}
       >
-        <img
-          src={getMoonImage()}
-          alt={pet.name}
-          className="w-full h-full object-cover animate-float"
+        <canvas
+          ref={canvasRef}
+          className="w-full h-full animate-float"
           style={{
             animationDelay: twinkleDelay,
           }}

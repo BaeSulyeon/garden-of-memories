@@ -16,6 +16,8 @@ import CosmicBackButton from "@/components/CosmicBackButton";
 import { trpc } from "@/lib/trpc";
 import { usePetContext } from "@/contexts/PetContext";
 
+import { MoonDesignType } from "@/utils/moonDesigns";
+
 interface UserPet {
   id: number;
   name: string;
@@ -25,6 +27,7 @@ interface UserPet {
   imageUrl: string;
   createdAt: Date;
   status?: "active" | "memorial";
+  moonDesign?: MoonDesignType;
 }
 
 export default function MyGarden() {
@@ -63,7 +66,7 @@ export default function MyGarden() {
     setIsLoading(false);
   }, []);
 
-  const handleAddPet = (newPet: Omit<UserPet, "id" | "createdAt"> & { status: "active" | "memorial" }) => {
+  const handleAddPet = (newPet: Omit<UserPet, "id" | "createdAt"> & { status: "active" | "memorial"; moonDesign: MoonDesignType }) => {
     const pet: UserPet = {
       ...newPet,
       id: pets.length + 1,

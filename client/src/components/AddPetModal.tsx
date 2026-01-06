@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Upload } from "lucide-react";
+import { MOON_DESIGNS, MOON_DESIGN_LABELS, drawMoon, type MoonDesignType } from "@/utils/moonDesigns";
 
 interface AddPetModalProps {
   open: boolean;
@@ -28,6 +29,7 @@ interface AddPetModalProps {
     age: number;
     imageUrl: string;
     status: "active" | "memorial";
+    moonDesign: MoonDesignType;
   }) => void;
 }
 
@@ -54,6 +56,7 @@ export default function AddPetModal({
     age: string;
     imageUrl: string;
     status: "active" | "memorial";
+    moonDesign: MoonDesignType;
   }>({
     name: "",
     type: "",
@@ -61,9 +64,26 @@ export default function AddPetModal({
     age: "",
     imageUrl: "",
     status: "active",
+    moonDesign: "full-bright",
   });
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const canvasRefs = useRef<Record<MoonDesignType, HTMLCanvasElement | null>>({} as Record<MoonDesignType, HTMLCanvasElement | null>);
+
+  // 달 디자인 미리보기 그리기
+  useEffect(() => {
+    MOON_DESIGNS.forEach((design) => {
+      const canvas = canvasRefs.current[design];
+      if (canvas) {
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          canvas.width = 80;
+          canvas.height = 80;
+          drawMoon(ctx, 80, design);
+        }
+      }
+    });
+  }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -99,6 +119,7 @@ export default function AddPetModal({
       age: parseInt(formData.age),
       imageUrl: formData.imageUrl,
       status: formData.status,
+      moonDesign: formData.moonDesign,
     });
 
     // 폼 초기화
@@ -109,13 +130,14 @@ export default function AddPetModal({
       age: "",
       imageUrl: "",
       status: "active",
+      moonDesign: "full-bright",
     });
     setImagePreview(null);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle
             style={{ fontFamily: "var(--font-heading)", fontWeight: 300 }}
@@ -251,6 +273,38 @@ export default function AddPetModal({
                 <SelectItem value="memorial">영원한 인연</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          {/* 달 디자인 선택 */}
+          <div className="space-y-2">
+            <Label>달 디자인 선택</Label>
+            <div className="grid grid-cols-4 gap-2">
+              {MOON_DESIGNS.map((design) => (
+                <button
+                  key={design}
+                  type="button"
+                  onClick={() =>
+                    setFormData((prev) => ({ ...prev, moonDesign: design }))
+                  }
+                  className={`p-2 rounded-lg border-2 transition-all ${
+                    formData.moonDesign === design
+                      ? "border-pink-400 bg-pink-400/10"
+                      : "border-muted-foreground/30 hover:border-muted-foreground/50"
+                  }`}
+                  title={MOON_DESIGN_LABELS[design]}
+                >
+                  <canvas
+                    ref={(el) => {
+                      if (el) canvasRefs.current[design] = el;
+                    }}
+                    className="w-full h-auto"
+                  />
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground text-center">
+              {MOON_DESIGN_LABELS[formData.moonDesign]}
+            </p>
           </div>
 
           {/* 버튼 */}

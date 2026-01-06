@@ -1,3 +1,5 @@
+import { MoonDesignType } from "@/utils/moonDesigns";
+
 export interface Pet {
   id: number;
   name: string;
@@ -13,6 +15,7 @@ export interface Pet {
   dateOfPassing?: string;
   status?: "함께하는 중" | "영원한 인연";
   moonType?: "full" | "crescent" | "gibbous";
+  moonDesign?: MoonDesignType; // 캔버스 달 디자인
   position?: {
     x: number; // percentage
     y: number; // percentage
