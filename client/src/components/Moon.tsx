@@ -1,14 +1,15 @@
 /*
  * Design Philosophy: Celestial Poetics
  * Component: Moon (Individual celestial body)
+ * - Image-based moon rendering with real moon pictures
  * - Breathing animation (subtle scale pulse)
  * - Soft glow effect with random twinkle
- * - Curved text below showing pet name with fade-in
+ * - Pet name centered below moon with fade-in
  * - Respectful hover interaction (gentle brightness increase)
  */
 
 import { Pet } from "@/types/pet";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface MoonProps {
   pet: Pet;
@@ -18,7 +19,6 @@ interface MoonProps {
 export default function Moon({ pet, onClick }: MoonProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [showName, setShowName] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Show name after a delay
   useEffect(() => {
@@ -27,51 +27,6 @@ export default function Moon({ pet, onClick }: MoonProps) {
     }, 500);
     return () => clearTimeout(timer);
   }, []);
-
-  // Draw curved text on canvas
-  useEffect(() => {
-    if (!showName) return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    // Set canvas size based on moon size
-    const canvasSize = pet.size === "large" ? 200 : pet.size === "medium" ? 160 : 120;
-    canvas.width = canvasSize;
-    canvas.height = canvasSize / 2;
-
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Set text properties
-    ctx.font = `${pet.size === "large" ? 18 : pet.size === "medium" ? 16 : 14}px 'Noto Sans KR', sans-serif`;
-    ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-
-    // Draw curved text
-    const text = pet.name;
-    const radius = canvasSize / 3;
-    const angleStep = 0.3 / text.length;
-    const startAngle = Math.PI / 2 - (angleStep * text.length) / 2;
-
-    ctx.save();
-    ctx.translate(canvas.width / 2, 10);
-
-    for (let i = 0; i < text.length; i++) {
-      const angle = startAngle + angleStep * i;
-      ctx.save();
-      ctx.rotate(angle);
-      ctx.translate(0, radius);
-      ctx.rotate(-angle);
-      ctx.fillText(text[i], 0, 0);
-      ctx.restore();
-    }
-
-    ctx.restore();
-  }, [pet.name, pet.size, showName]);
 
   // Get moon image based on type
   const getMoonImage = () => {
@@ -101,13 +56,27 @@ export default function Moon({ pet, onClick }: MoonProps) {
     }
   };
 
+  // Get text size classes
+  const getTextSizeClass = () => {
+    switch (pet.size) {
+      case "large":
+        return "text-lg md:text-xl";
+      case "medium":
+        return "text-base md:text-lg";
+      case "small":
+        return "text-sm md:text-base";
+      default:
+        return "text-base md:text-lg";
+    }
+  };
+
   // Random animation delay for variety
   const animationDelay = `${Math.random() * 2}s`;
   const twinkleDelay = `${Math.random() * 3}s`;
 
   return (
     <div
-      className="absolute cursor-pointer transition-all duration-700 ease-out"
+      className="absolute cursor-pointer transition-all duration-700 ease-out flex flex-col items-center"
       style={{
         left: `${pet.position?.x ?? 50}%`,
         top: `${pet.position?.y ?? 50}%`,
@@ -117,37 +86,41 @@ export default function Moon({ pet, onClick }: MoonProps) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative flex flex-col items-center">
-        {/* Moon image */}
-        <div
-          className={`${getSizeClass()} animate-breathe animate-twinkle transition-all duration-500`}
+      {/* Moon image */}
+      <div
+        className={`${getSizeClass()} animate-breathe animate-twinkle transition-all duration-500 rounded-full overflow-hidden`}
+        style={{
+          animationDelay: animationDelay,
+          filter: isHovered
+            ? "drop-shadow(0 0 20px rgba(255, 255, 255, 0.8)) brightness(1.2)"
+            : "drop-shadow(0 0 12px rgba(255, 255, 255, 0.5))",
+        }}
+      >
+        <img
+          src={getMoonImage()}
+          alt={pet.name}
+          className="w-full h-full object-cover animate-float"
           style={{
-            animationDelay: animationDelay,
-            filter: isHovered
-              ? "drop-shadow(0 0 20px rgba(255, 255, 255, 0.8)) brightness(1.2)"
-              : "drop-shadow(0 0 12px rgba(255, 255, 255, 0.5))",
-          }}
-        >
-          <img
-            src={getMoonImage()}
-            alt={pet.name}
-            className="w-full h-full object-contain animate-float"
-            style={{
-              animationDelay: twinkleDelay,
-            }}
-          />
-        </div>
-
-        {/* Curved text name */}
-        <canvas
-          ref={canvasRef}
-          className={`mt-2 transition-opacity duration-1000 ${
-            showName ? "opacity-100" : "opacity-0"
-          }`}
-          style={{
-            filter: "drop-shadow(0 0 4px rgba(0, 0, 0, 0.8))",
+            animationDelay: twinkleDelay,
           }}
         />
+      </div>
+
+      {/* Pet name centered below moon */}
+      <div
+        className={`mt-3 md:mt-4 transition-opacity duration-1000 text-center ${
+          showName ? "opacity-100" : "opacity-0"
+        }`}
+        style={{
+          filter: "drop-shadow(0 0 4px rgba(0, 0, 0, 0.8))",
+        }}
+      >
+        <p
+          className={`${getTextSizeClass()} font-light text-foreground whitespace-nowrap`}
+          style={{ fontFamily: "var(--font-body)" }}
+        >
+          {pet.name}
+        </p>
       </div>
     </div>
   );
