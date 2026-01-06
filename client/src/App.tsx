@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import MyGarden from "./pages/MyGarden";
 import LetterHistory from "./pages/LetterHistory";
+import PetProfile from "./pages/PetProfile";
 
 function Router() {
   return (
@@ -14,6 +15,7 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/my-garden"} component={MyGarden} />
       <Route path={"/letter-history"} component={LetterHistory} />
+      <Route path={"/pet/:id"} component={PetProfile} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

@@ -21,6 +21,7 @@ import { samplePets } from "@/data/pets";
 import { Pet } from "@/types/pet";
 
 export default function Home() {
+  const [, setLocation] = useLocation();
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [replyModalOpen, setReplyModalOpen] = useState(false);
@@ -33,8 +34,7 @@ export default function Home() {
   }, [registerUser]);
 
   const handleMoonClick = (pet: Pet) => {
-    setSelectedPet(pet);
-    setModalOpen(true);
+    setLocation(`/pet/${pet.id}`);
   };
 
   const handleOpenReply = () => {

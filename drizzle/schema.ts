@@ -129,3 +129,42 @@ export const petPhotos = mysqlTable("petPhotos", {
 
 export type PetPhoto = typeof petPhotos.$inferSelect;
 export type InsertPetPhoto = typeof petPhotos.$inferInsert;
+
+
+/**
+ * Chrysanthemum tributes table - users pay tribute to pets with chrysanthemums
+ * Design Philosophy: 국화 추도 (Chrysanthemum Tribute)
+ * - Replaces traditional "like" with meaningful chrysanthemum tributes
+ * - Each tribute is a gesture of respect and remembrance
+ */
+export const chrysanthemumTributes = mysqlTable("chrysanthemumTributes", {
+  id: int("id").autoincrement().primaryKey(),
+  petId: int("petId").notNull(),
+  userId: int("userId").notNull(),
+  tributeCount: int("tributeCount").default(1).notNull(), // Number of chrysanthemums
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ChrysanthemumTribute = typeof chrysanthemumTributes.$inferSelect;
+export type InsertChrysanthemumTribute = typeof chrysanthemumTributes.$inferInsert;
+
+/**
+ * Comfort comments table - other users leave words of comfort
+ * Design Philosophy: 위로 댓글 (Comfort Comments)
+ * - Community members share brief words of comfort and support
+ * - Creates a supportive environment for grieving pet owners
+ */
+export const comfortComments = mysqlTable("comfortComments", {
+  id: int("id").autoincrement().primaryKey(),
+  petId: int("petId").notNull(),
+  userId: int("userId").notNull(),
+  userName: varchar("userName", { length: 255 }).notNull(), // Anonymous or user name
+  content: text("content").notNull(), // Comfort message (max 280 characters)
+  isAnonymous: int("isAnonymous").default(0).notNull(), // 0 = named, 1 = anonymous
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ComfortComment = typeof comfortComments.$inferSelect;
+export type InsertComfortComment = typeof comfortComments.$inferInsert;

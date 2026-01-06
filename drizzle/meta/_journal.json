@@ -22,6 +22,13 @@
       "when": 1767655765113,
       "tag": "0002_fancy_true_believers",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1767669794140,
+      "tag": "0003_exotic_quasar",
+      "breakpoints": true
     }
   ]
 }
