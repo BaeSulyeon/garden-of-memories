@@ -174,3 +174,9 @@
 - [x] AddPetModal 자동 열기 기능
 - [x] 나의 정원에서 추가 시 홈 화면 실시간 동기화
 - [x] 전체 기능 테스트
+
+
+## Phase 20: 뒤로가기 시 홈 화면 동기화 버그 수정
+- [x] CosmicBackButton에서 petAdded 이벤트 발생
+- [x] MyGarden에서 뒤로가기 시 이벤트 발생
+- [x] 전체 기능 테스트
