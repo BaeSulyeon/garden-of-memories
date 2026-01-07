@@ -175,7 +175,9 @@
 
 
 ## Phase 20: AddPetModal 반려동물 데이터베이스 저장 연결
-- [ ] 반려동물 저장 API 엔드포인트 생성 (POST /api/pets)
-- [ ] AddPetModal handleSubmit 수정 - 반려동물 저장 및 돘리 연결
-- [ ] 데이터베이스 데이터 저장 검증
-- [ ] 홈 화면에 새로운 달 동적 표시 테스트
+- [x] 반려동물 저장 API 엔드포인트 생성 (POST /api/pets)
+- [x] AddPetModal handleSubmit 수정 - 반려동물 저장 및 편지 연결
+- [x] 데이터베이스 데이터 저장 검증
+- [x] 홈 화면에 새로운 달 동적 표시 테스트
+- [x] AddPetModal 타입 시스템 수정 (status 한글 문자열)
+- [x] 편지 제출 성공 및 전체 워크플로우 검증

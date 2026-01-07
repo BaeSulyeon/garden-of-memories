@@ -28,7 +28,7 @@ interface AddPetModalProps {
     gender: string;
     age: number;
     imageUrl: string;
-    status: "active" | "memorial";
+    status: "함께하는 중" | "영원한 인연";
     moonDesign: string;
     userLetter?: string;
   }) => void;
@@ -57,7 +57,7 @@ export default function AddPetModal({
     gender: string;
     age: string;
     imageUrl: string;
-    status: "active" | "memorial";
+    status: "함께하는 중" | "영원한 인연";
     moonDesign: string;
     userLetter: string;
   }>({
@@ -66,7 +66,7 @@ export default function AddPetModal({
     gender: "",
     age: "",
     imageUrl: "",
-        status: "함께하는 중",
+    status: "함께하는 중",
     moonDesign: "moon-1",
     userLetter: "",
   });
@@ -179,30 +179,29 @@ export default function AddPetModal({
         moonDesign: formData.moonDesign,
         userLetter: formData.userLetter,
       });
+
+      // 폼 초기화
+      setFormData({
+        name: "",
+        type: "",
+        gender: "",
+        age: "",
+        imageUrl: "",
+        status: "함께하는 중",
+        moonDesign: "moon-1",
+        userLetter: "",
+      });
+      setImagePreview(null);
+      setStep(1);
+      onOpenChange(false);
     } catch (error) {
       console.error("Error submitting letter:", error);
       alert("편지 제출 중 오류가 발생했습니다.");
       return;
     }
-
-    // 폰 초기화
-    setFormData({
-      name: "",
-      type: "",
-      gender: "",
-      age: "",
-      imageUrl: "",
-      status: "함께하는 중",
-      moonDesign: "moon-1",
-      userLetter: "",
-    });
-    setImagePreview(null);
-    setStep(1);
   };
 
   const handleClose = () => {
-    onOpenChange(false);
-    setStep(1);
     setFormData({
       name: "",
       type: "",
@@ -214,6 +213,8 @@ export default function AddPetModal({
       userLetter: "",
     });
     setImagePreview(null);
+    setStep(1);
+    onOpenChange(false);
   };
 
   return (
@@ -333,11 +334,7 @@ export default function AddPetModal({
                   onValueChange={(value) =>
                     setFormData((prev) => ({
                       ...prev,
-                      status: (
-                        value === "active" || value === "memorial"
-                          ? value
-                          : "active"
-                      ) as "active" | "memorial",
+                      status: value as "함께하는 중" | "영원한 인연",
                     }))
                   }
                 >
@@ -345,8 +342,8 @@ export default function AddPetModal({
                     <SelectValue placeholder="상태 선택" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="active">함께하는 중</SelectItem>
-                    <SelectItem value="memorial">영원한 인연</SelectItem>
+                    <SelectItem value="함께하는 중">함께하는 중</SelectItem>
+                    <SelectItem value="영원한 인연">영원한 인연</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
