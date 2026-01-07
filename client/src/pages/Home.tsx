@@ -13,6 +13,7 @@ import { useLocation } from "wouter";
 import Moon from "@/components/Moon";
 import NightSky from "@/components/NightSky";
 import PetModal from "@/components/PetModal";
+import AddPetModal from "@/components/AddPetModal";
 import ReplyNotification from "@/components/ReplyNotification";
 import ReplyModal from "@/components/ReplyModal";
 import GardenNavigation from "@/components/GardenNavigation";
@@ -25,6 +26,7 @@ export default function Home() {
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [replyModalOpen, setReplyModalOpen] = useState(false);
+  const [addPetModalOpen, setAddPetModalOpen] = useState(false);
   const { notification, dismissNotification, registerUser } =
     useReplyNotification();
 
@@ -73,7 +75,7 @@ export default function Home() {
       {/* 나의 달 띄우기 버튼 */}
       <div className="relative z-10 flex justify-center mb-4">
         <button
-          onClick={() => setLocation("/my-garden?modal=add-pet")}
+          onClick={() => setAddPetModalOpen(true)}
           className="px-6 py-2 border border-white rounded-lg text-white hover:bg-white/10 transition-all duration-300 font-medium"
         >
           나의 달 띄우기
@@ -99,6 +101,9 @@ export default function Home() {
 
       {/* Pet Modal */}
       <PetModal pet={selectedPet} open={modalOpen} onOpenChange={setModalOpen} />
+
+      {/* Add Pet Modal */}
+      <AddPetModal open={addPetModalOpen} onOpenChange={setAddPetModalOpen} />
 
       {/* Real-time Reply Notification */}
       {notification && (
