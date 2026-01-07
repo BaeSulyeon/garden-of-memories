@@ -3,7 +3,7 @@ import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 import { getDb } from "./db.js";
-import { letters, replies, comfortMessages } from "../drizzle/schema.js";
+import { letters, replies, comfortMessages, pets } from "../drizzle/schema.js";
 import { invokeLLM } from "./_core/llm.js";
 import { eq } from "drizzle-orm";
 
@@ -177,6 +177,22 @@ async function startServer() {
     } catch (error) {
       console.error("[API] Error fetching reply:", error);
       res.status(500).json({ error: "Failed to fetch reply" });
+    }
+  });
+
+  // API 라우트 - 반려동물 목록 조회
+  app.get("/api/pets", async (req, res) => {
+    try {
+      const db = await getDb();
+      if (!db) {
+        return res.status(500).json({ error: "Database not available" });
+      }
+
+      const allPets = await db.select().from(pets);
+      res.json(allPets);
+    } catch (error) {
+      console.error("[API] Error fetching pets:", error);
+      res.status(500).json({ error: "Failed to fetch pets" });
     }
   });
 

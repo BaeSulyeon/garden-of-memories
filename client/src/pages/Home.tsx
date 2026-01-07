@@ -27,6 +27,8 @@ export default function Home() {
   const [modalOpen, setModalOpen] = useState(false);
   const [replyModalOpen, setReplyModalOpen] = useState(false);
   const [addPetModalOpen, setAddPetModalOpen] = useState(false);
+  const [pets, setPets] = useState<Pet[]>(samplePets); // 샘플 데이터로 초기화
+  const [loading, setLoading] = useState(true);
   const { notification, dismissNotification, registerUser } =
     useReplyNotification();
 
@@ -34,6 +36,38 @@ export default function Home() {
   useEffect(() => {
     registerUser(1); // 테스트용 사용자 ID
   }, [registerUser]);
+
+  // 데이터베이스에서 반려동물 조회
+  useEffect(() => {
+    const fetchPets = async () => {
+      try {
+        const response = await fetch("/api/pets");
+        if (response.ok) {
+          const data = await response.json();
+          // 데이터베이스의 반려동물과 샘플 반려동물 합치기
+          const dbPets = data.map((pet: any) => ({
+            id: pet.id,
+            name: pet.name,
+            type: pet.type,
+            gender: pet.gender,
+            age: pet.age,
+            imageUrl: pet.imageUrl || "/default-pet.png",
+            status: pet.status || "active",
+            moonDesign: pet.moonDesign || "blue",
+          }));
+          // 샘플 데이터와 데이터베이스 데이터 합치기
+          setPets([...samplePets, ...dbPets]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch pets:", error);
+        // 에러 발생 시 샘플 데이터만 사용
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPets();
+  }, []);
 
   const handleMoonClick = (pet: Pet) => {
     setLocation(`/pet/${pet.id}`);
@@ -91,7 +125,7 @@ export default function Home() {
 
       {/* Moons (Pets) */}
       <div className="relative z-10 w-full h-[calc(100vh-180px)] md:h-[calc(100vh-200px)] min-h-[500px] md:min-h-[600px]">
-        {samplePets.map((pet) => (
+        {!loading && pets.map((pet) => (
           <Moon key={pet.id} pet={pet} onClick={() => handleMoonClick(pet)} />
         ))}
       </div>
