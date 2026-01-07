@@ -43,6 +43,13 @@ export default function Home() {
     setReplyModalOpen(true);
   };
 
+  const handleAddPet = (pet: any) => {
+    // 반려동물 추가 후 모달 닫기
+    setAddPetModalOpen(false);
+    // 나의 정원으로 이동
+    setLocation("/my-garden");
+  };
+
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
       {/* Navigation */}
@@ -103,7 +110,11 @@ export default function Home() {
       <PetModal pet={selectedPet} open={modalOpen} onOpenChange={setModalOpen} />
 
       {/* Add Pet Modal */}
-      <AddPetModal open={addPetModalOpen} onOpenChange={setAddPetModalOpen} />
+      <AddPetModal
+        open={addPetModalOpen}
+        onOpenChange={setAddPetModalOpen}
+        onAddPet={handleAddPet}
+      />
 
       {/* Real-time Reply Notification */}
       {notification && (
