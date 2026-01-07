@@ -27,7 +27,7 @@ export default function Home() {
   const [modalOpen, setModalOpen] = useState(false);
   const [replyModalOpen, setReplyModalOpen] = useState(false);
   const [addPetModalOpen, setAddPetModalOpen] = useState(false);
-  const [pets, setPets] = useState<Pet[]>(samplePets); // 샘플 데이터로 초기화
+  const [pets, setPets] = useState<Pet[]>([]); // 데이터베이스 데이터만 사용
   const [loading, setLoading] = useState(true);
   const { notification, dismissNotification, registerUser } =
     useReplyNotification();
@@ -55,12 +55,11 @@ export default function Home() {
             status: pet.status || "active",
             moonDesign: pet.moonDesign || "blue",
           }));
-          // 샘플 데이터와 데이터베이스 데이터 합치기
-          setPets([...samplePets, ...dbPets]);
+          // 데이터베이스 데이터만 설정
+          setPets(dbPets);
         }
       } catch (error) {
         console.error("Failed to fetch pets:", error);
-        // 에러 발생 시 샘플 데이터만 사용
       } finally {
         setLoading(false);
       }

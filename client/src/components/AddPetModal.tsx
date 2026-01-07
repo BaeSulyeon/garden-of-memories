@@ -66,7 +66,7 @@ export default function AddPetModal({
     gender: "",
     age: "",
     imageUrl: "",
-    status: "active",
+        status: "함께하는 중",
     moonDesign: "moon-1",
     userLetter: "",
   });
@@ -101,13 +101,13 @@ export default function AddPetModal({
       }
     }
 
-    // Step 2 검증
-    if (step === 2) {
-      if (!formData.imageUrl) {
-        alert("대표 사진을 업로드해주세요.");
-        return;
-      }
-    }
+    // Step 2 검증 (사진 업로드는 선택사항)
+    // if (step === 2) {
+    //   if (!formData.imageUrl) {
+    //     alert("대표 사진을 업로드해주세요.");
+    //     return;
+    //   }
+    // }
 
     if (step < 3) {
       setStep(step + 1);
@@ -120,7 +120,7 @@ export default function AddPetModal({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.userLetter.trim()) {
@@ -128,25 +128,71 @@ export default function AddPetModal({
       return;
     }
 
-    onAddPet({
-      name: formData.name,
-      type: formData.type,
-      gender: formData.gender,
-      age: parseInt(formData.age),
-      imageUrl: formData.imageUrl,
-      status: formData.status,
-      moonDesign: formData.moonDesign,
-      userLetter: formData.userLetter,
-    });
+    try {
+      // 1. 반려동물 저장
+      const petResponse = await fetch("/api/pets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: 1, // 테스트용 사용자 ID
+          name: formData.name,
+          type: formData.type,
+          gender: formData.gender,
+          age: parseInt(formData.age),
+          status: formData.status || "함께하는 중",
+          moonDesign: formData.moonDesign,
+          profileImage: formData.imageUrl,
+        }),
+      });
 
-    // 폼 초기화
+      if (!petResponse.ok) {
+        throw new Error("Failed to save pet");
+      }
+
+      const petData = await petResponse.json();
+      const petId = petData.id;
+
+      // 2. 편지 저장 (반려동물 ID와 함께)
+      const letterResponse = await fetch("/api/letters", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: 1, // 테스트용 사용자 ID
+          petId: petId || 0,
+          petName: formData.name,
+          content: formData.userLetter,
+        }),
+      });
+
+      if (!letterResponse.ok) {
+        throw new Error("Failed to save letter");
+      }
+
+      // 3. 콜백 호출
+      onAddPet({
+        name: formData.name,
+        type: formData.type,
+        gender: formData.gender,
+        age: parseInt(formData.age),
+        imageUrl: formData.imageUrl,
+        status: formData.status,
+        moonDesign: formData.moonDesign,
+        userLetter: formData.userLetter,
+      });
+    } catch (error) {
+      console.error("Error submitting letter:", error);
+      alert("편지 제출 중 오류가 발생했습니다.");
+      return;
+    }
+
+    // 폰 초기화
     setFormData({
       name: "",
       type: "",
       gender: "",
       age: "",
       imageUrl: "",
-      status: "active",
+      status: "함께하는 중",
       moonDesign: "moon-1",
       userLetter: "",
     });
@@ -163,7 +209,7 @@ export default function AddPetModal({
       gender: "",
       age: "",
       imageUrl: "",
-      status: "active",
+      status: "함께하는 중",
       moonDesign: "moon-1",
       userLetter: "",
     });

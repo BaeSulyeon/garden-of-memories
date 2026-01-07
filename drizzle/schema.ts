@@ -37,6 +37,7 @@ export const letters = mysqlTable("letters", {
   petId: int("petId").notNull(), // Reference to pet (can be from sample data or user-created)
   petName: varchar("petName", { length: 255 }).notNull(), // Store pet name for reference
   content: text("content").notNull(), // Letter content
+  reply: text("reply"), // AI-generated reply
   emotionalKeywords: text("emotionalKeywords"), // Comma-separated keywords (guilt, longing, gratitude, etc.)
   status: mysqlEnum("status", ["sent", "processing", "replied"]).default("sent").notNull(),
   sentAt: timestamp("sentAt").defaultNow().notNull(),
@@ -102,6 +103,7 @@ export const pets = mysqlTable("pets", {
   gender: varchar("gender", { length: 50 }).notNull(), // 수컷, 암컷
   age: int("age"), // 나이 (세)
   status: mysqlEnum("status", ["함께하는 중", "영원한 인연"]).default("함께하는 중").notNull(),
+  moonDesign: varchar("moonDesign", { length: 50 }).default("blue").notNull(), // 달 디자인 (blue, gray, gold, pink, purple)
   profileImage: text("profileImage"), // S3 URL for main pet photo
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
