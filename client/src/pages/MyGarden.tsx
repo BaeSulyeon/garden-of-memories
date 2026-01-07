@@ -209,7 +209,7 @@ export default function MyGarden() {
                   className="border-pink-400/50 hover:border-pink-400 hover:bg-pink-400/10"
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  새로운 친구 추가
+                  나의 달 띄우기
                 </Button>
               </div>
             </>

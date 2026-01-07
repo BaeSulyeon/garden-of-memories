@@ -177,7 +177,7 @@ export default function AddPetModal({
           <DialogTitle
             style={{ fontFamily: "var(--font-heading)", fontWeight: 300 }}
           >
-            새로운 친구 추가
+            나의 달 띄우기
           </DialogTitle>
           <DialogDescription>
             {step === 1 && "소중한 반려동물의 기본 정보를 입력해주세요."}
